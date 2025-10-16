@@ -8,8 +8,6 @@ void ordenaPontos( std::vector<sf::Vector2f>  &pontos );
 int verificaSentido( sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3 );
 std::vector<sf::Vector2f> criaEnvoltoriaConvexa( const std::vector<sf::Vector2f> &pontos );
 
-
-
 int main() {
 
     std::vector<sf::Vector2f>  pontos{};
@@ -56,7 +54,7 @@ int main() {
 
        sf::VertexArray linhas( sf::PrimitiveType::LineStrip );
 
-        if ( envoltoriaConvexa.size() > 1){           
+        if ( envoltoriaConvexa.size() > 1 ){           
 
             for ( const sf::Vector2f& ponto : envoltoriaConvexa ) {
                 sf::Vertex vertice;
@@ -98,7 +96,7 @@ void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
     if (pontos.size() < 2) return; 
 
  
-int p0_index = 0;
+    int p0_index = 0;
     for ( int i = 1; i < pontos.size(); ++i ) {
         if ( ( pontos[i].y > pontos[p0_index].y ) || 
             ( pontos[i].y == pontos[p0_index].y && pontos[i].x < pontos[p0_index].x ) ) {
@@ -116,8 +114,8 @@ int p0_index = 0;
 
             if ( sentido == 0 ) { // Pontos colineares
                 // Retorna true se 'a' for mais próximo de 'ponto0' que 'b'
-                float distA = (a.x - ponto0.x)*(a.x - ponto0.x) + (a.y - ponto0.y)*(a.y - ponto0.y);
-                float distB = (b.x - ponto0.x)*(b.x - ponto0.x) + (b.y - ponto0.y)*(b.y - ponto0.y);
+                float distA = ( a.x - ponto0.x ) * ( a.x - ponto0.x ) + ( a.y - ponto0.y ) * ( a.y - ponto0.y );
+                float distB = ( b.x - ponto0.x ) * ( b.x - ponto0.x ) + ( b.y - ponto0.y ) * ( b.y - ponto0.y );
                 return distA < distB;
             }
 
@@ -130,13 +128,13 @@ int p0_index = 0;
 
 int verificaSentido( sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3 ) {
     
-    double valor = (double)(p2.x - p1.x) * (p3.y - p1.y) -
-                   (double)(p2.y - p1.y) * (p3.x - p1.x);
+    double valor = (double) ( p2.x - p1.x ) * ( p3.y - p1.y ) -
+                   (double) ( p2.y - p1.y ) * ( p3.x - p1.x );
 
     // pequena tolerância (epsilon) para lidar com erros de ponto flutuante
     const double epsilon = 1e-9;
 
-    if ( std::fabs(valor) < epsilon ) {
+    if ( std::fabs( valor ) < epsilon ) {
         return 0; // Colinear
     } else if ( valor > 0 ) {
         return 1; // Horário 
