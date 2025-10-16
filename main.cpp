@@ -5,7 +5,7 @@
 #include <algorithm>
 
 void ordenaPontos( std::vector<sf::Vector2f>  &pontos );
-int verificaSentido( sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3 );
+int verificaSentido( const sf::Vector2f &p1, const sf::Vector2f &p2, const sf::Vector2f &p3 );
 std::vector<sf::Vector2f> criaEnvoltoriaConvexa( const std::vector<sf::Vector2f> &pontos );
 
 int main() {
@@ -126,7 +126,7 @@ void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
     );
 }
 
-int verificaSentido( sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3 ) {
+int verificaSentido( const sf::Vector2f &p1, const sf::Vector2f &p2, const sf::Vector2f &p3 ) {
     
     double valor = (double) ( p2.x - p1.x ) * ( p3.y - p1.y ) -
                    (double) ( p2.y - p1.y ) * ( p3.x - p1.x );
