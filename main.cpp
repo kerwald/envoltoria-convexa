@@ -93,53 +93,47 @@ int main() {
     return 0;
 }
 
-void ordenaPontos( std::vector<sf::Vector2f>  &pontos ){
+void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
 
-    sf::Vector2f ponto0 = pontos[0];
+    if (pontos.size() < 2) return; 
 
-    for( sf::Vector2f ponto : pontos ){
-
-        if( ponto == ponto0 ){
-            continue;
+ 
+int p0_index = 0;
+    for ( int i = 1; i < pontos.size(); ++i ) {
+        if ( ( pontos[i].y > pontos[p0_index].y ) || 
+            ( pontos[i].y == pontos[p0_index].y && pontos[i].x < pontos[p0_index].x ) ) {
+            p0_index = i;
         }
-
-        if( ( ponto.y > ponto0.y ) || ( ponto.y == ponto0.y && ponto.x < ponto0.x ) ){
-            ponto0 = ponto;
-        }
-
     }
 
-    std::sort( pontos.begin(), pontos.end(),
-        [ ponto0 ]( sf::Vector2f a, sf::Vector2f b ) {
+    std::swap( pontos[0], pontos[p0_index] );
+    sf::Vector2f ponto0 = pontos[0];
 
-            if (a == ponto0) return true;
-            if (b == ponto0) return false;
-
-            float anguloA = atan2( a.y - ponto0.y, a.x - ponto0.x );
+    std::sort( pontos.begin() + 1, pontos.end(), 
+        [ponto0]( const sf::Vector2f& a, const sf::Vector2f& b ) {
             
-            float anguloB = atan2( b.y - ponto0.y, b.x - ponto0.x );
+            int sentido = verificaSentido( ponto0, a, b );
 
-            if ( anguloA != anguloB ) {
-                return anguloA < anguloB;
+            if ( sentido == 0 ) { // Pontos colineares
+                // Retorna true se 'a' for mais próximo de 'ponto0' que 'b'
+                float distA = (a.x - ponto0.x)*(a.x - ponto0.x) + (a.y - ponto0.y)*(a.y - ponto0.y);
+                float distB = (b.x - ponto0.x)*(b.x - ponto0.x) + (b.y - ponto0.y)*(b.y - ponto0.y);
+                return distA < distB;
             }
 
-            // Se os ângulos forem iguais
-            // o ponto mais próximo do ponto0 vem primeiro.
-            float distA = (a.x - ponto0.x)*(a.x - ponto0.x) + (a.y - ponto0.y)*(a.y - ponto0.y);
-            float distB = (b.x - ponto0.x)*(b.x - ponto0.x) + (b.y - ponto0.y)*(b.y - ponto0.y);
-            return distA < distB;
-
+            // Se for anti-horário (sentido < 0), 'a' vem antes de 'b'.
+            // Se for horário (sentido > 0), 'a' vem depois de 'b'.
+            return sentido < 0;
         }
     );
 }
 
 int verificaSentido( sf::Vector2f p1, sf::Vector2f p2, sf::Vector2f p3 ) {
     
-    // Usamos double para maior precisão no cálculo intermediário
     double valor = (double)(p2.x - p1.x) * (p3.y - p1.y) -
                    (double)(p2.y - p1.y) * (p3.x - p1.x);
 
-    // Definimos uma pequena tolerância (epsilon) para lidar com erros de ponto flutuante
+    // pequena tolerância (epsilon) para lidar com erros de ponto flutuante
     const double epsilon = 1e-9;
 
     if ( std::fabs(valor) < epsilon ) {
@@ -157,7 +151,7 @@ std::vector<sf::Vector2f> criaEnvoltoriaConvexa( const std::vector<sf::Vector2f>
     envoltoriaConvexa.push_back( pontos[0] );
     envoltoriaConvexa.push_back( pontos[1] );
 
-for( size_t i = 2; i < pontos.size(); i++ ){
+    for( size_t i = 2; i < pontos.size(); i++ ){
         
         while ( envoltoriaConvexa.size() >= 2 && 
                verificaSentido( envoltoriaConvexa[envoltoriaConvexa.size()-2], envoltoriaConvexa.back(), pontos[i] ) >= 0) 
