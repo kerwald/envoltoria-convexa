@@ -1,4 +1,4 @@
-#include <p8g/p8g.hpp>
+#include "p8g/p8g.hpp"
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -9,13 +9,57 @@ struct Ponto{
     double y;
 };
 
+struct Envoltorio{
+
+    std::vector<Ponto> pontos;
+    std::vector<Ponto> verticesEnvoltorio;
+
+    Envoltorio() :
+        pontos{}, 
+        verticesEnvoltorio{} 
+    {}
+};
+
+Envoltorio *envoltorioptr = nullptr;
+
+void p8g::draw() {
+    background(220);
+    rect(50, 50, 100, 100);
+}
+
+void p8g::keyPressed() {}
+void p8g::keyReleased() {}
+void p8g::mouseMoved() {}
+void p8g::mousePressed() {
+    envoltorioptr->pontos.push_back( Ponto{ mouseX, mouseY } );
+    ordenaPontos( envoltorioptr->pontos );
+    envoltorioptr->verticesEnvoltorio = criaEnvoltoriaConvexa( envoltorioptr->pontos );
+}
+void p8g::mouseReleased() {}
+void p8g::mouseWheel(float delta) {}
+
 void ordenaPontos( std::vector<Ponto>  &pontos );
 int verificaSentido( const Ponto &p1, const Ponto &p2, const Ponto &p3 );
 std::vector<Ponto> criaEnvoltoriaConvexa( const std::vector<Ponto> &pontos );
 
 int main() {
 
+    Envoltorio *envoltorio = new Envoltorio();
+    envoltorioptr = envoltorio;
 
+    {
+        using namespace p8g;
+        run( 320, 320, "Envoltoria Convexa" );
+    }
+
+    for( Ponto ponto: envoltorio->pontos ){
+        std::cout << ponto.x << " " << ponto.y << " " << std::endl;
+    }
+
+
+
+
+    delete envoltorio;
     return 0;
 }
 

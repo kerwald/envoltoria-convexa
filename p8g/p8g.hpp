@@ -102,7 +102,7 @@ extern float mouseX, mouseY;
 extern int mouseButton;
 extern bool mouseIsPressed;
 extern float deltaTime;
-extern void draw(void);
+extern void draw();
 extern void keyPressed(void);
 extern void keyReleased(void);
 extern void mouseMoved(void);
