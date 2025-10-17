@@ -1,97 +1,25 @@
-#include <SFML/Graphics.hpp>
+#include <p8g/p8g.hpp>
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <algorithm>
 
-void ordenaPontos( std::vector<sf::Vector2f>  &pontos );
-int verificaSentido( const sf::Vector2f &p1, const sf::Vector2f &p2, const sf::Vector2f &p3 );
-std::vector<sf::Vector2f> criaEnvoltoriaConvexa( const std::vector<sf::Vector2f> &pontos );
+struct Ponto{
+    double x;
+    double y;
+};
+
+void ordenaPontos( std::vector<Ponto>  &pontos );
+int verificaSentido( const Ponto &p1, const Ponto &p2, const Ponto &p3 );
+std::vector<Ponto> criaEnvoltoriaConvexa( const std::vector<Ponto> &pontos );
 
 int main() {
 
-    std::vector<sf::Vector2f>  pontos{};
-    std::vector<sf::Vector2f>  envoltoriaConvexa{};
 
-    sf::RenderWindow window( sf::VideoMode::getDesktopMode(), "Envoltoria Convexa - C++/SFML", sf::State::Fullscreen );
-    window.setFramerateLimit( 60 );
-
-    while ( window.isOpen() ) {
-
-        while ( std::optional<sf::Event> optEvent = window.pollEvent() ) {
-            const sf::Event& event = *optEvent;
-
-            if ( event.is<sf::Event::Closed>() ) {
-                window.close();
-            }
-
-            if ( const auto* keyPressed = event.getIf<sf::Event::KeyPressed>() ) {
-                if ( keyPressed->code == sf::Keyboard::Key::Escape ) {
-                    window.close();
-                }
-            }
-
-            if ( const auto* mouseEvent = event.getIf<sf::Event::MouseButtonPressed>() ) {
-
-                if ( mouseEvent->button == sf::Mouse::Button::Left ) {
-                    
-                    sf::Vector2i pixelPos = mouseEvent->position;
-                    sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
-
-                    pontos.push_back( worldPos );
-
-                    ordenaPontos( pontos );
-                    if( pontos.size() > 2 ){
-                        envoltoriaConvexa = criaEnvoltoriaConvexa( pontos );
-                    }
-
-                }
-            }
-        }
-
-
-        window.clear(); 
-
-       sf::VertexArray linhas( sf::PrimitiveType::LineStrip );
-
-        if ( envoltoriaConvexa.size() > 1 ){           
-
-            for ( const sf::Vector2f& ponto : envoltoriaConvexa ) {
-                sf::Vertex vertice;
-                vertice.position = ponto;
-                vertice.color = sf::Color::Green;
-                linhas.append(vertice);
-            }
-
-            if ( !envoltoriaConvexa.empty() ) {
-                sf::Vertex verticeFinal;
-                verticeFinal.position = envoltoriaConvexa[0];
-                verticeFinal.color = sf::Color::Green;
-                linhas.append( verticeFinal );
-            }
-
-            window.draw( linhas );
-        }
-
-
-
-        for ( const sf::Vector2f& ponto : pontos ) {
-
-            sf::CircleShape pontoShape( 5.f );
-            pontoShape.setFillColor( sf::Color::White );
-            pontoShape.setOrigin( sf::Vector2f( 5.f, 5.f ) );
-            pontoShape.setPosition( ponto ); 
-            window.draw( pontoShape );   
-
-        }
-  
-
-        window.display();
-    }
     return 0;
 }
 
-void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
+void ordenaPontos( std::vector<Ponto> &pontos ){
 
     if (pontos.size() < 2) return; 
 
@@ -105,10 +33,10 @@ void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
     }
 
     std::swap( pontos[0], pontos[p0_index] );
-    sf::Vector2f ponto0 = pontos[0];
+    Ponto ponto0 = pontos[0];
 
     std::sort( pontos.begin() + 1, pontos.end(), 
-        [ponto0]( const sf::Vector2f& a, const sf::Vector2f& b ) {
+        [ponto0]( const Ponto &a, const Ponto &b ) {
             
             int sentido = verificaSentido( ponto0, a, b );
 
@@ -126,7 +54,7 @@ void ordenaPontos( std::vector<sf::Vector2f> &pontos ){
     );
 }
 
-int verificaSentido( const sf::Vector2f &p1, const sf::Vector2f &p2, const sf::Vector2f &p3 ) {
+int verificaSentido( const Ponto &p1, const Ponto &p2, const Ponto &p3 ) {
     
     double valor = (double) ( p2.x - p1.x ) * ( p3.y - p1.y ) -
                    (double) ( p2.y - p1.y ) * ( p3.x - p1.x );
@@ -143,9 +71,9 @@ int verificaSentido( const sf::Vector2f &p1, const sf::Vector2f &p2, const sf::V
     }
 }
 
-std::vector<sf::Vector2f> criaEnvoltoriaConvexa( const std::vector<sf::Vector2f> &pontos ){
+std::vector<Ponto> criaEnvoltoriaConvexa( const std::vector<Ponto> &pontos ){
 
-    std::vector<sf::Vector2f> envoltoriaConvexa{}; 
+    std::vector<Ponto> envoltoriaConvexa{}; 
     envoltoriaConvexa.push_back( pontos[0] );
     envoltoriaConvexa.push_back( pontos[1] );
 
