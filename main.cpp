@@ -74,10 +74,6 @@ int main() {
         run( 1920, 1080, "Envoltoria Convexa", true );
     }
 
-    for( Ponto ponto: envoltorio->pontos ){
-        std::cout << ponto.x << " " << ponto.y << " " << std::endl;
-    }
-
     delete envoltorio;
     return 0;
 }
