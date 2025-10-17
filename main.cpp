@@ -28,11 +28,11 @@ Envoltorio *envoltorioptr = nullptr;
 
 void p8g::draw() {
 
-    p8g::background( 0.0 );
+    p8g::background( 17, 24, 39 );
     
     if( envoltorioptr->pontos.size() > 1 ){
-        p8g::stroke( 255, 165, 0, 255 );
-        p8g::strokeWeight( 15 );
+        p8g::stroke( 255, 255, 255, 255 );
+        p8g::strokeWeight( 5 );
         for( int i=0; i<envoltorioptr->verticesEnvoltorio.size(); i++ ){
             std::vector<Ponto> *vertices = &envoltorioptr->verticesEnvoltorio;
             Ponto p1{ ( *vertices )[ i ] };
@@ -42,9 +42,12 @@ void p8g::draw() {
         }
     }    
 
-    p8g::stroke( 255, 0, 0, 255 );
-    p8g::strokeWeight( 15 );
     for( Ponto &ponto : envoltorioptr->pontos ){
+        p8g::stroke( 255, 255, 255, 255);
+        p8g::strokeWeight( 20 );
+        p8g::point( ponto.x, ponto.y );
+        p8g::stroke( 255, 165, 0, 255);
+        p8g::strokeWeight( 15 );
         p8g::point( ponto.x, ponto.y );
     }
 
