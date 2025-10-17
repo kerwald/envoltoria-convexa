@@ -78,9 +78,6 @@ int main() {
         std::cout << ponto.x << " " << ponto.y << " " << std::endl;
     }
 
-
-
-
     delete envoltorio;
     return 0;
 }
