@@ -9,7 +9,11 @@ LDFLAGS = -Lp8g
 
 LIBS = -lp8g++
 TARGET = main.exe
-SRCS = main.cpp
+
+# ADICIONAMOS Unidade.cpp aqui
+SRCS = main.cpp Unidade.cpp 
+
+# A lista de objetos é gerada a partir da lista de fontes
 OBJS = $(SRCS:.cpp=.o)
 
 # Regra padrão: compila o alvo principal
