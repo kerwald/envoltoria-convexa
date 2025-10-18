@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <cstdint>
 
 struct Ponto{
     double x;
@@ -20,6 +21,7 @@ struct Envoltorio{
     {}
 };
 
+std::vector<Ponto> gerarCirculo( const Ponto pontoCentral, const double &raio, const uint32_t &numPontos );
 void ordenaPontos( std::vector<Ponto>  &pontos );
 int verificaSentido( const Ponto &p1, const Ponto &p2, const Ponto &p3 );
 std::vector<Ponto> criaEnvoltoriaConvexa( const std::vector<Ponto> &pontos );
@@ -29,11 +31,24 @@ Envoltorio *envoltorioptr = nullptr;
 void p8g::draw() {
 
     p8g::background( 17, 24, 39 );
+
+    p8g::stroke( 255, 255, 255, 255 );
+    p8g::strokeWeight( 5 );
+    std::vector<Ponto> pontosCirculo{ gerarCirculo( Ponto{ 100, 100 }, 100, 100 ) };
+    Ponto ponto1{};
+    Ponto ponto2{};
+    for( long long unsigned int i=0; i<pontosCirculo.size(); i++ ){
+        ponto1 = pontosCirculo[i];
+        ponto2 = pontosCirculo[ ( i + 1 ) % pontosCirculo.size() ];
+
+        line( ponto1.x, ponto1.y, ponto2.x, ponto2.y );
+
+    }
     
     if( envoltorioptr->pontos.size() > 1 ){
         p8g::stroke( 255, 255, 255, 255 );
         p8g::strokeWeight( 5 );
-        for( int i=0; i<envoltorioptr->verticesEnvoltorio.size(); i++ ){
+        for( long long unsigned int i=0; i<envoltorioptr->verticesEnvoltorio.size(); i++ ){
             std::vector<Ponto> *vertices = &envoltorioptr->verticesEnvoltorio;
             Ponto p1{ ( *vertices )[ i ] };
             Ponto p2{ ( *vertices )[ ( i + 1 )  % vertices->size() ] };
@@ -57,9 +72,11 @@ void p8g::keyPressed() {}
 void p8g::keyReleased() {}
 void p8g::mouseMoved() {}
 void p8g::mousePressed() {
+
     envoltorioptr->pontos.push_back( Ponto{ mouseX, mouseY } );
     ordenaPontos( envoltorioptr->pontos );
     envoltorioptr->verticesEnvoltorio = criaEnvoltoriaConvexa( envoltorioptr->pontos );
+
 }
 void p8g::mouseReleased() {}
 void p8g::mouseWheel(float delta) {}
@@ -84,7 +101,7 @@ void ordenaPontos( std::vector<Ponto> &pontos ){
 
  
     int p0_index = 0;
-    for ( int i = 1; i < pontos.size(); ++i ) {
+    for ( unsigned long long int i = 1; i < pontos.size(); ++i ) {
         if ( ( pontos[i].y > pontos[p0_index].y ) || 
             ( pontos[i].y == pontos[p0_index].y && pontos[i].x < pontos[p0_index].x ) ) {
             p0_index = i;
@@ -148,5 +165,29 @@ std::vector<Ponto> criaEnvoltoriaConvexa( const std::vector<Ponto> &pontos ){
     }
 
     return envoltoriaConvexa;
+
+}
+
+std::vector<Ponto> gerarCirculo( const Ponto pontoCentral, const double &raio, const uint32_t &numPontos ) {
+
+    std::vector<Ponto> pontos;
+
+    const double pi2 = 2.0 * std::acos(-1.0); // 2 * pi
+    const double passoAngular = pi2 / numPontos;
+    
+    for ( uint32_t i=0; i < numPontos; ++i ) {
+
+        // O ângulo atual (em radianos)
+        double angulo = passoAngular * i;
+        
+        // Aplica a fórmula trigonométrica para as coordenadas (x, y)
+        // do círculo centrado em (0, 0)
+        // Translada as coordenadas para o centro desejado
+        Ponto ponto{ raio * std::cos( angulo ) + pontoCentral.x, raio * std::sin( angulo ) + pontoCentral.y };
+           
+        pontos.push_back( ponto );
+    }
+    
+    return pontos;
 
 }
