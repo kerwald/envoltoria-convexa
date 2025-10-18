@@ -1,14 +1,9 @@
 #include "Unidade.hpp"
+#include "p8g/p8g.hpp"
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include <random>
 #include "Ponto.hpp"
-
-std::random_device Unidade::rd;
-std::mt19937 Unidade::gerador( Unidade::rd() );
-std::uniform_real_distribution<> Unidade::dist_x( 0.0, 1920.0 );
-std::uniform_real_distribution<> Unidade::dist_y( 0.0, 1080.0 );
 
 void Unidade::setPontos( const Ponto &ponto ){
     pontos.push_back( ponto );
@@ -131,9 +126,8 @@ void Unidade::gerarPontosAleatorios( const uint32_t &quantidadeDePontos ){
 }
 
 Ponto Unidade::gerarPontoAleatorio(){
-    // Gera as coordenadas X e Y, usando o gerador estático de classe
-    double aleatorioX = dist_x( gerador );
-    double aleatorioY = dist_y( gerador );
+    double aleatorioX = p8g::random( 0.0, 1920.0 );
+    double aleatorioY = p8g::random( 0.0, 1080.0 );
     return Ponto{ aleatorioX, aleatorioY };
 }
 

@@ -2,7 +2,6 @@
 #include "Ponto.hpp"
 #include <vector>
 #include <cstdint>
-#include <random>
 
 class Unidade{
 
@@ -10,10 +9,6 @@ class Unidade{
         std::vector<Ponto> pontos;
         std::vector<Ponto> verticesEnvoltorio;
         std::vector< std::vector<Ponto> > formas;
-        static std::random_device rd;
-        static std::mt19937 gerador;
-        static std::uniform_real_distribution<> dist_x;
-        static std::uniform_real_distribution<> dist_y;
 
     public:
         void setPontos( const Ponto &ponto );
