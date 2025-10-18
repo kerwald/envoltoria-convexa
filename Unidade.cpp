@@ -2,8 +2,13 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <random>
 #include "Ponto.hpp"
 
+std::random_device Unidade::rd;
+std::mt19937 Unidade::gerador( Unidade::rd() );
+std::uniform_real_distribution<> Unidade::dist_x( 0.0, 1920.0 );
+std::uniform_real_distribution<> Unidade::dist_y( 0.0, 1080.0 );
 
 void Unidade::setPontos( const Ponto &ponto ){
     pontos.push_back( ponto );
@@ -18,9 +23,6 @@ std::vector<Ponto> Unidade::getVerticesEnvoltorio() const{
 }
 std::vector< std::vector<Ponto> > Unidade::getFormas() const{
     return formas;
-}
-std::vector<Ponto> Unidade::getPontosAleatorios() const{
-    return pontosAleatorios;
 }
     
 void Unidade::criaEnvoltoriaConvexa( ){
@@ -42,6 +44,7 @@ void Unidade::criaEnvoltoriaConvexa( ){
     }
 
 }
+
 void Unidade::gerarCirculo( const Ponto pontoCentral, const double &raio, const uint32_t &numPontos ) {
 
     std::vector<Ponto> circulo{};
@@ -116,4 +119,26 @@ void Unidade::ordenaPontos( ){
             return sentido < 0;
         }
     );
+}
+
+void Unidade::gerarPontosAleatorios( const uint32_t &quantidadeDePontos ){
+    
+    for( uint32_t i = 0; i < quantidadeDePontos; i++ ){
+        Ponto pontoAleatorio = gerarPontoAleatorio();
+        pontos.push_back( pontoAleatorio );
+    }
+
+}
+
+Ponto Unidade::gerarPontoAleatorio(){
+    // Gera as coordenadas X e Y, usando o gerador estático de classe
+    double aleatorioX = dist_x( gerador );
+    double aleatorioY = dist_y( gerador );
+    return Ponto{ aleatorioX, aleatorioY };
+}
+
+void Unidade::clean(){
+    pontos.clear();
+    formas.clear();
+    verticesEnvoltorio.clear();
 }

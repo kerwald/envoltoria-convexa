@@ -14,11 +14,15 @@ void p8g::draw() {
 
     p8g::background( 17, 24, 39 );
 
-    p8g::stroke( 255, 255, 255, 255 );
-    p8g::strokeWeight( 5 );
-
-    unidadeptr->gerarCirculo( Ponto{ 100, 100 }, 100, 100 );
-
+    for( std::vector<Ponto> forma: unidadeptr->getFormas() ){
+        p8g::stroke( 255, 255, 255, 255 );
+        p8g::strokeWeight( 5 );
+        for( long long unsigned int i=0; i<forma.size(); i++ ){
+            Ponto p1{ forma[ i ] };
+            Ponto p2{ forma[ ( i + 1 )  % forma.size() ] };
+            line( p1.x, p1.y, p2.x, p2.y );
+        }
+    }
     
     if( unidadeptr->getPontos().size() > 1 ){
         p8g::stroke( 255, 255, 255, 255 );
@@ -42,7 +46,24 @@ void p8g::draw() {
 
 }
 
-void p8g::keyPressed() {}
+void p8g::keyPressed() {
+    switch ( keyCode )
+    {
+    case 65:
+        unidadeptr->gerarPontosAleatorios( 50 );
+        unidadeptr->ordenaPontos( );
+        unidadeptr->criaEnvoltoriaConvexa( );
+        break;
+    case 67:
+        unidadeptr->gerarCirculo( unidadeptr->gerarPontoAleatorio(), 100, 100 );
+        break;
+    case 76:
+        unidadeptr->clean();
+        break;
+    default:
+        break;
+    }
+}
 void p8g::keyReleased() {}
 void p8g::mouseMoved() {}
 void p8g::mousePressed() {
@@ -56,6 +77,7 @@ void p8g::mouseReleased() {}
 void p8g::mouseWheel(float delta) {}
 
 int main() {
+
     Unidade unidade{};
     unidadeptr = &unidade;
 
