@@ -1,12 +1,19 @@
+#pragma once
 #include "Unidade.hpp"
 #include "p8g/p8g.hpp"
 #include <vector>
 #include <cmath>
 #include <algorithm>
 #include "Ponto.hpp"
+#include "Forma.hpp"
+#include "Poligono.hpp"
 
 void Unidade::setPontos( const Ponto &ponto ){
     pontos.push_back( ponto );
+}
+
+void Unidade::setNumeroDePontosAleatorios( const uint32_t &numero ){
+    numeroDePontosAleatorios = numero;
 }
 
 std::vector<Ponto> Unidade::getPontos() const{
@@ -16,8 +23,12 @@ std::vector<Ponto> Unidade::getPontos() const{
 std::vector<Ponto> Unidade::getVerticesEnvoltorio() const{
     return verticesEnvoltorio;
 }
-std::vector< std::vector<Ponto> > Unidade::getFormas() const{
+std::vector<Forma> Unidade::getFormas() const{
     return formas;
+}
+
+void Unidade::setForma( const Ponto &pontoCentral, const double &raio, const Poligono &poligono ){
+    formas.push_back( Forma{ pontoCentral, raio, poligono } );
 }
     
 void Unidade::criaEnvoltoriaConvexa( ){
@@ -37,29 +48,6 @@ void Unidade::criaEnvoltoriaConvexa( ){
         
         verticesEnvoltorio.push_back( pontos[i] );
     }
-
-}
-
-void Unidade::gerarCirculo( const Ponto pontoCentral, const double &raio, const uint32_t &numPontos ) {
-
-    std::vector<Ponto> circulo{};
-    const double pi2 = 2.0 * std::acos(-1.0); // 2 * pi
-    const double passoAngular = pi2 / numPontos;
-
-    for ( uint32_t i=0; i < numPontos; ++i ) {
-
-        // O ângulo atual (em radianos)
-        double angulo = passoAngular * i;
-        
-        // Aplica a fórmula trigonométrica para as coordenadas (x, y)
-        // do círculo centrado em (0, 0)
-        // Translada as coordenadas para o centro desejado
-        Ponto ponto{ raio * std::cos( angulo ) + pontoCentral.x, raio * std::sin( angulo ) + pontoCentral.y };
-        
-        circulo.push_back( ponto );
-    }
-
-    formas.push_back( circulo );
 
 }
 
