@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdint>
 #include <utility>
+#include <string>
 
 class Unidade{
 
@@ -27,5 +28,7 @@ class Unidade{
         void gerarPontosAleatorios( );
         std::pair<double, double> gerarPontoAleatorio( );
         void clean();
-
+        void gerarPontosNoCirculo( );
+        std::pair<double, double> gerarPontoNoCirculo( double centroX, double centroY, double raio );
+        void medirCustoECriarArquivo( const std::string& nomeArquivo, void (Unidade::*gerador)() );
 };

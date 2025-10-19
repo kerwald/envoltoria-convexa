@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <cstdint>
+#include <string>
 #include "Forma.hpp"
 #include "Poligono.hpp"
 
@@ -100,6 +101,12 @@ void p8g::keyPressed() {
         std::cout << "Digite o numero de pontos Aleatorios: " << std::endl;
         std::cin >> valor;
         unidadeptr->setNumeroDePontosAleatorios( valor );
+        break;
+    case 71: // G Gerar Dados
+        std::cout << "Gerando arquivo de dados de custo..." << std::endl;
+        unidadeptr->medirCustoECriarArquivo("custo_uniforme.csv", &Unidade::gerarPontosAleatorios);
+        unidadeptr->medirCustoECriarArquivo("custo_circulo.csv", &Unidade::gerarPontosNoCirculo);
+        std::cout << "Arquivo gerado! Salve-o e use no Colab." << std::endl;
         break;
     default:
         break;

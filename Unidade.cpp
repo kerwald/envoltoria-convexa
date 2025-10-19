@@ -6,6 +6,9 @@
 #include "Forma.hpp"
 #include "Poligono.hpp"
 #include <utility>
+#include <chrono> 
+#include <fstream> 
+#include <string>
 
 #define WIDTH  960.0
 #define LENGHT 540.0
@@ -128,4 +131,74 @@ void Unidade::clean(){
     pontos.clear();
     formas.clear();
     verticesEnvoltorio.clear();
+}
+
+
+void Unidade::medirCustoECriarArquivo( const std::string& nomeArquivo, void (Unidade::*gerador)() ){
+
+    std::ofstream arquivoSaida( nomeArquivo );
+    // Novo cabeçalho inclui a métrica H (Vertices na Envoltória)
+    arquivoSaida << "Tamanho_N,Tempo_ms,Vertices_H" << std::endl; 
+
+    // ** CORREÇÃO APLICADA AQUI: Limite razoável para N **
+    for (uint32_t N = 100; N <= 200000; N += 500) {
+
+        setNumeroDePontosAleatorios( N );
+        
+        long long tempoTotal_ms = 0;
+        uint32_t H_total = 0;
+        const int numRepeticoes = 5; 
+
+        for (int rep = 0; rep < numRepeticoes; ++rep) {
+            clean(); 
+            // Chama a função de geração passada como parâmetro (aleatório ou círculo)
+            (this->*gerador)(); 
+
+            auto inicio = std::chrono::high_resolution_clock::now(); 
+
+            ordenaPontos();
+            criaEnvoltoriaConvexa();
+
+            auto fim = std::chrono::high_resolution_clock::now(); 
+
+            auto duracao = std::chrono::duration_cast<std::chrono::milliseconds>(fim - inicio);
+            
+            tempoTotal_ms += duracao.count();
+            H_total += verticesEnvoltorio.size(); // SOMA DOS VÉRTICES (H)
+        }
+
+        long long tempoMedio_ms = tempoTotal_ms / numRepeticoes;
+        uint32_t H_medio = H_total / numRepeticoes; // MÉDIA DE H
+
+        // Registra N, Tempo e H
+        arquivoSaida << N << "," << tempoMedio_ms << "," << H_medio << std::endl;
+    }
+
+    arquivoSaida.close();
+}
+
+std::pair<double, double> Unidade::gerarPontoNoCirculo( double centroX, double centroY, double raio ) {
+
+    const double pi{ std::acos(-1.0) };
+    double angulo = p8g::random( 0.0, 2.0 * pi );
+
+    // Converte de coordenadas polares para cartesianas
+    double x = centroX + raio * std::cos( angulo );
+    double y = centroY + raio * std::sin( angulo );
+
+    return std::pair<double, double> { x, y };
+}
+
+void Unidade::gerarPontosNoCirculo( ){
+    // Define o centro e o raio do círculo
+    const double centroX = WIDTH / 2.0;
+    const double centroY = LENGHT / 2.0;
+    // Escolha um raio que caiba na sua tela
+    const double raio = std::min( WIDTH, LENGHT ) * 0.4; 
+    
+    // Gera N pontos (onde N é o valor de numeroDePontosAleatorios)
+    for( uint32_t i = 0; i < numeroDePontosAleatorios; i++ ){
+        std::pair<double, double> pontoCirculo = gerarPontoNoCirculo( centroX, centroY, raio );
+        pontos.push_back( pontoCirculo );
+    }
 }
