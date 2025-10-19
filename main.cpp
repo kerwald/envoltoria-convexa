@@ -8,6 +8,8 @@
 #include "Forma.hpp"
 #include "Poligono.hpp"
 
+#define WIDTH  960
+#define LENGHT 540
 
 Unidade *unidadeptr = nullptr;
 
@@ -122,7 +124,7 @@ int main() {
 
     {
         using namespace p8g;
-        run( 1920, 1080, "Envoltoria Convexa", true );
+        run( WIDTH, LENGHT, "Envoltoria Convexa", true );
     }
 
     unidadeptr = nullptr;

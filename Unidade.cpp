@@ -7,8 +7,12 @@
 #include "Poligono.hpp"
 #include <utility>
 
-Unidade::Unidade() : numeroDePontosAleatorios( 20 )
+#define WIDTH  960.0
+#define LENGHT 540.0
+
+Unidade::Unidade() : numeroDePontosAleatorios( 25 )
 {}
+
 void Unidade::setPontos( const std::pair<double, double> &ponto ){
     pontos.push_back( ponto );
 }
@@ -115,8 +119,8 @@ void Unidade::gerarPontosAleatorios( ){
 }
 
 std::pair<double, double> Unidade::gerarPontoAleatorio(){
-    double aleatorioX = p8g::random( 0.0, 1920.0 );
-    double aleatorioY = p8g::random( 0.0, 1080.0 );
+    double aleatorioX = p8g::random( 0.0, WIDTH );
+    double aleatorioY = p8g::random( 0.0, LENGHT );
     return std::pair<double, double> { aleatorioX, aleatorioY };
 }
 
