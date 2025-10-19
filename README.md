@@ -36,11 +36,6 @@ Este gráfico compara o tempo de execução (ms) para as duas distribuições, a
 
 ![Gráfico 1: Comparação de Custo Computacional por Distribuição](docs/comparacaoDeCustoComputacional.png)
 
-| Distribuição | Complexidade Empírica | Fator de Ajuste $C$ |
-| :--- | :--- | :--- |
-| Uniforme | $O(N \log N)$ | **[Ajuste Fino $C_{uni}$ do Colab]** |
-| Circular | $O(N \log N)$ | **[Ajuste Fino $C_{circ}$ do Colab]** |
-
 **Análise e Conclusão:** O gráfico demonstra que ambas as distribuições (Uniforme e Circular) se ajustam rigorosamente à curva teórica $O(N \log N)$. Embora a distribuição Circular gere um número de vértices drasticamente maior (ver Gráfico 2), o tempo de execução é essencialmente o mesmo. Isso confirma que o seu algoritmo é **robusto** à distribuição dos pontos, pois o seu custo é dominado pela etapa de **ordenação ($O(N \log N)$)**, que é independente da geometria do conjunto de pontos.
 
 ### 4.2. Gráfico 2: Crescimento do Número de Vértices ($H$ vs. $N$)
