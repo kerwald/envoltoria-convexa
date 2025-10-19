@@ -1,14 +1,15 @@
-#pragma once
 #include "Unidade.hpp"
 #include "p8g/p8g.hpp"
 #include <vector>
 #include <cmath>
 #include <algorithm>
-#include "Ponto.hpp"
 #include "Forma.hpp"
 #include "Poligono.hpp"
+#include <utility>
 
-void Unidade::setPontos( const Ponto &ponto ){
+Unidade::Unidade() : numeroDePontosAleatorios( 20 )
+{}
+void Unidade::setPontos( const std::pair<double, double> &ponto ){
     pontos.push_back( ponto );
 }
 
@@ -16,18 +17,18 @@ void Unidade::setNumeroDePontosAleatorios( const uint32_t &numero ){
     numeroDePontosAleatorios = numero;
 }
 
-std::vector<Ponto> Unidade::getPontos() const{
+std::vector<std::pair<double, double>> Unidade::getPontos() const{
     return pontos;
 }
 
-std::vector<Ponto> Unidade::getVerticesEnvoltorio() const{
+std::vector<std::pair<double, double>> Unidade::getVerticesEnvoltorio() const{
     return verticesEnvoltorio;
 }
 std::vector<Forma> Unidade::getFormas() const{
     return formas;
 }
 
-void Unidade::setForma( const Ponto &pontoCentral, const double &raio, const Poligono &poligono ){
+void Unidade::setForma( const std::pair<double, double> &pontoCentral, const double &raio, const Poligono &poligono ){
     formas.push_back( Forma{ pontoCentral, raio, poligono } );
 }
     
@@ -51,10 +52,10 @@ void Unidade::criaEnvoltoriaConvexa( ){
 
 }
 
-int Unidade::verificaSentido( const Ponto &p1, const Ponto &p2, const Ponto &p3 ) const{
+int Unidade::verificaSentido( const std::pair<double, double> &p1, const std::pair<double, double> &p2, const std::pair<double, double> &p3 ) const{
     
-    double valor = (double) ( p2.x - p1.x ) * ( p3.y - p1.y ) -
-                (double) ( p2.y - p1.y ) * ( p3.x - p1.x );
+    double valor = (double) ( p2.first - p1.first ) * ( p3.second - p1.second ) -
+                (double) ( p2.second - p1.second ) * ( p3.first - p1.first );
 
     // pequena tolerância (epsilon) para lidar com erros de ponto flutuante
     const double epsilon = 1e-9;
@@ -75,25 +76,25 @@ void Unidade::ordenaPontos( ){
 
     int p0_index = 0;
     for ( unsigned long long int i = 1; i < pontos.size(); ++i ) {
-        if ( ( pontos[i].y > pontos[p0_index].y ) || 
-            ( pontos[i].y == pontos[p0_index].y && pontos[i].x < pontos[p0_index].x ) ) {
+        if ( ( pontos[i].second > pontos[p0_index].second ) || 
+            ( pontos[i].second == pontos[p0_index].second && pontos[i].first < pontos[p0_index].first ) ) {
             p0_index = i;
         }
     }
 
     std::swap( pontos[0], pontos[p0_index] );
-    Ponto ponto0 = pontos[0];
+    std::pair<double, double> ponto0 = pontos[0];
 
     std::sort( pontos.begin() + 1, pontos.end(),
 
-        [ ponto0, this ]( const Ponto &a, const Ponto &b ) {
+        [ ponto0, this ]( const std::pair<double, double> &a, const std::pair<double, double> &b ) {
             
             int sentido = verificaSentido( ponto0, a, b );
 
             if ( sentido == 0 ) { // Pontos colineares
                 // Retorna true se 'a' for mais próximo de 'ponto0' que 'b'
-                float distA = ( a.x - ponto0.x ) * ( a.x - ponto0.x ) + ( a.y - ponto0.y ) * ( a.y - ponto0.y );
-                float distB = ( b.x - ponto0.x ) * ( b.x - ponto0.x ) + ( b.y - ponto0.y ) * ( b.y - ponto0.y );
+                float distA = ( a.first - ponto0.first ) * ( a.first - ponto0.first ) + ( a.second - ponto0.second ) * ( a.second - ponto0.second );
+                float distB = ( b.first - ponto0.first ) * ( b.first - ponto0.first ) + ( b.second - ponto0.second ) * ( b.second - ponto0.second );
                 return distA < distB;
             }
 
@@ -104,19 +105,19 @@ void Unidade::ordenaPontos( ){
     );
 }
 
-void Unidade::gerarPontosAleatorios( const uint32_t &quantidadeDePontos ){
+void Unidade::gerarPontosAleatorios( ){
     
-    for( uint32_t i = 0; i < quantidadeDePontos; i++ ){
-        Ponto pontoAleatorio = gerarPontoAleatorio();
+    for( uint32_t i = 0; i < numeroDePontosAleatorios; i++ ){
+        std::pair<double, double> pontoAleatorio = gerarPontoAleatorio();
         pontos.push_back( pontoAleatorio );
     }
 
 }
 
-Ponto Unidade::gerarPontoAleatorio(){
+std::pair<double, double> Unidade::gerarPontoAleatorio(){
     double aleatorioX = p8g::random( 0.0, 1920.0 );
     double aleatorioY = p8g::random( 0.0, 1080.0 );
-    return Ponto{ aleatorioX, aleatorioY };
+    return std::pair<double, double> { aleatorioX, aleatorioY };
 }
 
 void Unidade::clean(){

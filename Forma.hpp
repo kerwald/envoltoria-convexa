@@ -1,25 +1,23 @@
 #pragma once
 #include <cstdint>
 #include <vector>
-#include "Ponto.hpp"
+#include <utility>
 #include "Poligono.hpp"
 
 class Forma{
     private:
         std::vector<uint16_t> cor;
-        std::vector<Ponto> vertices;
+        std::vector< std::pair<double, double> > vertices;
         Poligono poligono;
 
     public:
-        Forma( const Ponto &pontoCentral, const double &raio, const Poligono &poligono );
+        Forma( const std::pair<double, double> &pontoCentral, const double &raio, const Poligono &poligono );
         std::vector<uint16_t> getCor() const;
-        std::vector<Ponto> getVertices() const;
+        std::vector< std::pair<double, double> > getVertices() const;
+        Poligono getPoligono() const;
 
     private:
-        void gerarCirculo( const Ponto &pontoCentral, const double &raio ); 
-        void gerarQuadrado( const Ponto &pontoCentral, const double &raio );
-        void gerarRetangulo( const Ponto &pontoCentral, const double &raio );
-        void gerarTriangulo( const Ponto &pontoCentral, const double &raio );
+        void gerarTriangulo( const std::pair<double, double> &pontoCentral, const double &raio );
         std::vector<uint16_t> corAleatoria() const;
 
 };

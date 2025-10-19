@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 #include <cstdint>
-#include "Ponto.hpp"
 #include "Forma.hpp"
 #include "Poligono.hpp"
 
@@ -16,14 +15,36 @@ void p8g::draw() {
 
     p8g::background( 17, 24, 39 );
 
+
     for( Forma forma : unidadeptr->getFormas() ){
-        p8g::stroke( 255, 255, 255, 255 );
-        p8g::strokeWeight( 5 );
-        const std::vector<uint16_t> cor{ forma.getCor() };
-        for( long long unsigned int i=0; i<forma.getVertices().size(); i++ ){
-            Ponto p1{ forma.getVertices()[ i ] };
-            Ponto p2{ forma.getVertices()[ ( i + 1 )  % forma.getVertices().size() ] };
-            line( p1.x, p1.y, p2.x, p2.y );
+
+        const std::vector< std::pair<double, double> > vertices{ forma.getVertices() };
+
+        p8g::fill( forma.getCor()[0], forma.getCor()[1], forma.getCor()[2] );
+        p8g::stroke( 255, 255, 255 ); 
+        p8g::strokeWeight( 8.0 ); 
+
+
+        switch ( forma.getPoligono() ){
+            case Poligono::quadrado :
+                p8g::rect( vertices[0].first, vertices[0].second, vertices[1].first,  vertices[1].second);
+                break;
+            case Poligono::retangulo:
+                p8g::rect( vertices[0].first, vertices[0].second, vertices[1].first,  vertices[1].second);
+                break;
+            case Poligono::triangulo:
+                p8g::triangle( 
+                        vertices[0].first, 
+                        vertices[0].second, 
+                        vertices[1].first,  
+                        vertices[1].second, 
+                        vertices[2].first, 
+                        vertices[2].second
+                    );
+                break;
+            case Poligono::circulo:
+                p8g::ellipse( vertices[0].first, vertices[0].second, vertices[1].first,  vertices[1].second);
+                break;
         }
     }
     
@@ -31,29 +52,30 @@ void p8g::draw() {
         p8g::stroke( 255, 255, 255, 255 );
         p8g::strokeWeight( 5 );
         for( long long unsigned int i=0; i<unidadeptr->getVerticesEnvoltorio().size(); i++ ){
-            std::vector<Ponto> vertices = unidadeptr->getVerticesEnvoltorio();
-            Ponto p1{ vertices[ i ] };
-            Ponto p2{ vertices[ ( i + 1 )  % vertices.size() ] };
-            line( p1.x, p1.y, p2.x, p2.y );
+            std::vector< std::pair<double, double> > vertices = unidadeptr->getVerticesEnvoltorio();
+            std::pair<double, double> p1{ vertices[ i ] };
+            std::pair<double, double> p2{ vertices[ ( i + 1 )  % vertices.size() ] };
+            line( p1.first, p1.second, p2.first, p2.second );
         }
     }    
 
-    for( Ponto &ponto : unidadeptr->getPontos() ){
+    for( std::pair<double, double> &ponto : unidadeptr->getPontos() ){
         p8g::stroke( 255, 255, 255, 255);
         p8g::strokeWeight( 20 );
-        p8g::point( ponto.x, ponto.y );
+        p8g::point( ponto.first, ponto.second );
         p8g::stroke( 255, 165, 0, 255);
         p8g::strokeWeight( 15 );
-        p8g::point( ponto.x, ponto.y );
+        p8g::point( ponto.first, ponto.second );
     }
 
 }
 
 void p8g::keyPressed() {
+    uint32_t valor{};
     switch ( keyCode )
     {
     case 65: // A
-        unidadeptr->gerarPontosAleatorios( 50 );
+        unidadeptr->gerarPontosAleatorios( );
         unidadeptr->ordenaPontos( );
         unidadeptr->criaEnvoltoriaConvexa( );
         break;
@@ -65,7 +87,7 @@ void p8g::keyPressed() {
         break;
     case 82: // R
         unidadeptr->setForma( unidadeptr->gerarPontoAleatorio(), 100, Poligono::retangulo );
-    break;
+        break;
     case 84: // T
         unidadeptr->setForma( unidadeptr->gerarPontoAleatorio(), 100, Poligono::triangulo );
         break;
@@ -73,7 +95,6 @@ void p8g::keyPressed() {
         unidadeptr->clean();
         break;
     case 86: // V
-        uint32_t valor;
         std::cout << "Digite o numero de pontos Aleatorios: " << std::endl;
         std::cin >> valor;
         unidadeptr->setNumeroDePontosAleatorios( valor );
@@ -86,7 +107,7 @@ void p8g::keyReleased() {}
 void p8g::mouseMoved() {}
 void p8g::mousePressed() {
 
-    unidadeptr->setPontos( Ponto{ mouseX, mouseY } );
+    unidadeptr->setPontos( std::pair<double, double>{ mouseX, mouseY } );
     unidadeptr->ordenaPontos( );
     unidadeptr->criaEnvoltoriaConvexa( );
 
